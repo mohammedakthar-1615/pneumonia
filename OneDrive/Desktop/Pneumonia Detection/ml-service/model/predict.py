@@ -16,9 +16,9 @@ test_image_path = os.path.join(
     PROJECT_ROOT,
     "dataset",
     "chest_xray",
-    "train",
-    "PNEUMONIA",
-    "person23_bacteria_101.jpeg"
+    "test",
+    "NORMAL",
+    "NORMAL2-IM-0199-0001.jpeg"
 )
 
 IMG_SIZE = 224  # ⚠️ Change to 150 if training used 150
