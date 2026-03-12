@@ -1,103 +1,212 @@
-import tensorflow as tf
-import numpy as np
 import os
-from tensorflow.keras.preprocessing import image
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 
-# ======================================
-# PATH SETTINGS
-# ======================================
+import cv2
+import numpy as np
+import tensorflow as tf
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(BASE_DIR)
+if not os.path.exists("results"):
+    os.makedirs("results")
+# ================================
+# Paths
+# ================================
 
-model_path = os.path.join(BASE_DIR, "pneumonia_model_final.h5")
+INPUT_IMAGE = "../dataset/chest_xray/train/NORMAL/IM-0129-0001.jpeg"
 
-test_image_path = os.path.join(
-    PROJECT_ROOT,
-    "dataset",
-    "chest_xray",
-    "test",
-    "NORMAL",
-    "NORMAL2-IM-0199-0001.jpeg"
-)
+PREPROCESS_PATH = "results/preprocessed_image.png"
+SEGMENT_PATH = "results/segmented_image.png"
+EDGE_PATH = "results/edge_image.png"
+HEATMAP_PATH = "results/heatmap_image.png"
 
-IMG_SIZE = 224  # ⚠️ Change to 150 if training used 150
+MODEL_PATH = "pneumonia_model_final.h5"
 
-# ======================================
-# LOAD MODEL
-# ======================================
+os.makedirs("results", exist_ok=True)
 
-if not os.path.exists(model_path):
-    raise FileNotFoundError(f"Model not found at:\n{model_path}")
 
-print("Loading trained model...")
-model = tf.keras.models.load_model(model_path)
-print("Model loaded successfully!\n")
+# ================================
+# 1️⃣ PREPROCESSING
+# ================================
 
-# ======================================
-# PREDICTION FUNCTION
-# ======================================
+def preprocessing():
 
-def predict_image(img_path):
+    img = cv2.imread(INPUT_IMAGE)
 
-    if not os.path.exists(img_path):
-        raise FileNotFoundError(f"Image not found at:\n{img_path}")
+    if img is None:
+        print("ERROR: Image not found ->", INPUT_IMAGE)
+        exit()
 
-    img = image.load_img(img_path, target_size=(IMG_SIZE, IMG_SIZE))
-    img_array = image.img_to_array(img)
-    img_array = img_array / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
+    img = cv2.resize(img, (224,224))
 
-    predictions = model.predict(img_array, verbose=0)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    # 🔥 Handle BOTH binary and categorical models
-    if predictions.shape[1] == 1:
-        # Binary sigmoid output
-        prob = predictions[0][0]
+    blur = cv2.GaussianBlur(gray,(5,5),0)
 
-        if prob > 0.5:
-            label = "PNEUMONIA"
-            confidence = prob * 100
-        else:
-            label = "NORMAL"
-            confidence = (1 - prob) * 100
+    equalized = cv2.equalizeHist(blur)
 
+    cv2.imwrite(PREPROCESS_PATH,equalized)
+
+    print("Preprocessing Done")
+    print("Image:", os.path.abspath(PREPROCESS_PATH))
+
+    return equalized
+
+
+# ================================
+# 2️⃣ SEGMENTATION
+# ================================
+
+def segmentation(image):
+
+    _,thresh = cv2.threshold(image,120,255,cv2.THRESH_BINARY)
+
+    contours,_ = cv2.findContours(
+        thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+    )
+
+    seg = cv2.cvtColor(image,cv2.COLOR_GRAY2BGR)
+
+    cv2.drawContours(seg,contours,-1,(0,0,255),2)
+
+    cv2.imwrite(SEGMENT_PATH,seg)
+
+    print("Segmentation Done")
+    print("Image:", os.path.abspath(SEGMENT_PATH))
+
+
+# ================================
+# 3️⃣ EDGE DETECTION
+# ================================
+
+def edge_detection(image):
+
+    edges = cv2.Canny(image,50,150)
+
+    cv2.imwrite(EDGE_PATH,edges)
+
+    print("Edge Detection Done")
+    print("Image:", os.path.abspath(EDGE_PATH))
+
+
+# ================================
+# 4️⃣ AI HEATMAP (Grad-CAM)
+# ================================
+
+def ai_heatmap():
+
+    model = tf.keras.models.load_model(MODEL_PATH)
+
+    img = cv2.imread(INPUT_IMAGE)
+    img = cv2.resize(img,(224,224))
+
+    img_array = np.expand_dims(img/255.0,axis=0)
+
+    last_conv = None
+    for layer in reversed(model.layers):
+        if isinstance(layer, tf.keras.layers.Conv2D):
+            last_conv = layer.name
+            break
+
+    grad_model = tf.keras.models.Model(
+        [model.inputs],
+        [model.get_layer(last_conv).output, model.output]
+    )
+
+    with tf.GradientTape() as tape:
+
+        conv_output,preds = grad_model(img_array)
+
+        loss = preds[:,0]
+
+    grads = tape.gradient(loss,conv_output)
+
+    pooled_grads = tf.reduce_mean(grads,axis=(0,1,2))
+
+    conv_output = conv_output[0]
+
+    heatmap = conv_output @ pooled_grads[...,tf.newaxis]
+
+    heatmap = tf.squeeze(heatmap)
+
+    heatmap = np.maximum(heatmap,0)/np.max(heatmap)
+
+    heatmap = cv2.resize(heatmap,(224,224))
+
+    heatmap = np.uint8(255*heatmap)
+
+    heatmap = cv2.applyColorMap(heatmap,cv2.COLORMAP_JET)
+
+    superimposed = cv2.addWeighted(img,0.6,heatmap,0.4,0)
+
+    cv2.imwrite(HEATMAP_PATH,superimposed)
+
+    print("AI Heatmap Generated")
+    print("Image:", os.path.abspath(HEATMAP_PATH))
+
+
+# ================================
+# 5️⃣ PREDICTION + STAGE
+# ================================
+
+def prediction():
+
+    model = tf.keras.models.load_model(MODEL_PATH)
+
+    img = cv2.imread(INPUT_IMAGE)
+    img = cv2.resize(img,(224,224))
+    img = img/255.0
+    img = np.expand_dims(img,axis=0)
+
+    pred = model.predict(img)
+
+    probability = float(pred[0][0])
+
+    # Reverse probability if model trained with Normal=1
+    pneumonia_prob = 1 - probability
+
+    accuracy = round(pneumonia_prob * 100,2)
+
+    # Disease detection
+    if pneumonia_prob < 0.5:
+        disease = "NORMAL"
     else:
-        # Softmax categorical output
-        class_index = np.argmax(predictions[0])
-        confidence = predictions[0][class_index] * 100
+        disease = "PNEUMONIA"
 
-        class_labels = ["NORMAL", "PNEUMONIA"]  # adjust if reversed
-        label = class_labels[class_index]
-
-    # Stage mapping (only if pneumonia)
-    if label == "PNEUMONIA":
-        if confidence < 65:
-            stage = "Congestion"
-        elif confidence < 75:
-            stage = "Resolution"
-        elif confidence < 85:
-            stage = "Grey Hepatization"
-        else:
-            stage = "Red Hepatization"
+    # Stage detection
+    if pneumonia_prob < 0.25:
+        stage = "Healthy Lung"
+    elif pneumonia_prob < 0.50:
+        stage = "Congestion Stage"
+    elif pneumonia_prob < 0.75:
+        stage = "Red Hepatization Stage"
     else:
-        stage = "No Stage"
+        stage = "Grey Hepatization Stage"
 
-    return label, stage, round(confidence, 2)
+    print("\n==============================")
+    print(" FINAL AI DIAGNOSIS RESULT")
+    print("==============================")
 
-# ======================================
-# MAIN
-# =================================
+    print("Disease Detected :", disease)
+    print("Prediction Score :", pneumonia_prob)
+    print("Model Confidence :", accuracy,"%")
+    print("Pneumonia Stage  :", stage)
+
+    print("\nGenerated Result Images:")
+    print("Preprocessed :", os.path.abspath(PREPROCESS_PATH))
+    print("Segmented    :", os.path.abspath(SEGMENT_PATH))
+    print("Edges        :", os.path.abspath(EDGE_PATH))
+    print("AI Heatmap   :", os.path.abspath(HEATMAP_PATH))
+
+    print("Pipeline Started...")
 
 if __name__ == "__main__":
 
-    label, stage, confidence = predict_image(test_image_path)
+    img = preprocessing()
 
-    print("=================================")
-    print("        PREDICTION RESULT        ")
-    print("=================================")
-    print(f"Image Path : {test_image_path}")
-    print(f"Prediction : {label}")
-    print(f"Stage      : {stage}")
-    print(f"Confidence : {confidence}%")
-    print("=================================")
+    segmentation(img)
+
+    edge_detection(img)
+
+    ai_heatmap()
+
+    prediction()
