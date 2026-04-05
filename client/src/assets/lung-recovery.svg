@@ -1,0 +1,26 @@
+<svg width="640" height="480" viewBox="0 0 640 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="lungGrad" x1="320" y1="0" x2="320" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#34d399"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="sparkle" x1="100" y1="100" x2="540" y2="380" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8fafc" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#a78bfa" stop-opacity="0.9"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="480" rx="32" fill="#071017"/>
+  <path d="M200 140C200 92 240 60 300 60C360 60 400 92 400 140V260C400 310 360 340 300 340C240 340 200 310 200 260V140Z" fill="url(#lungGrad)" opacity="0.95"/>
+  <path d="M440 140C440 92 400 60 340 60C280 60 240 92 240 140V260C240 310 280 340 340 340C400 340 440 310 440 260V140Z" fill="url(#lungGrad)" opacity="0.95"/>
+  <path d="M240 172C240 150 280 120 320 120C360 120 400 150 400 172" stroke="#ecfccb" stroke-width="5" stroke-linecap="round"/>
+  <path d="M240 218C240 196 280 166 320 166C360 166 400 196 400 218" stroke="#ecfccb" stroke-width="5" stroke-linecap="round"/>
+  <path d="M240 264C240 242 280 212 320 212C360 212 400 242 400 264" stroke="#ecfccb" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="345" cy="330" r="8" fill="#ffffff"/>
+  <circle cx="275" cy="330" r="8" fill="#ffffff"/>
+  <path d="M150 120L180 90" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+  <path d="M160 150L190 130" stroke="#f8fafc" stroke-width="4" stroke-linecap="round"/>
+  <path d="M500 120L470 90" stroke="#a78bfa" stroke-width="4" stroke-linecap="round"/>
+  <path d="M490 170L460 150" stroke="#22d3ee" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="100" cy="380" r="36" fill="url(#sparkle)" opacity="0.35"/>
+  <circle cx="550" cy="380" r="30" fill="url(#sparkle)" opacity="0.25"/>
+</svg>
