@@ -107,14 +107,22 @@ const DiagnosticResults = ({ result }) => {
               <div className="metric-card">
                 <div className="metric-icon">🎪</div>
                 <div className="metric-label">Precision</div>
-                <div className="metric-value">{(result.precision * 100).toFixed(2)}%</div>
+                <div className="metric-value">
+                  {result.precision !== null && result.precision !== undefined 
+                    ? (result.precision > 1 ? result.precision : result.precision * 100).toFixed(2) + '%'
+                    : 'N/A'}
+                </div>
               </div>
 
               {/* F1 Score */}
               <div className="metric-card">
                 <div className="metric-icon">📊</div>
                 <div className="metric-label">F1 Score</div>
-                <div className="metric-value">{(result.f1Score * 100).toFixed(2)}%</div>
+                <div className="metric-value">
+                  {result.f1Score !== null && result.f1Score !== undefined
+                    ? (result.f1Score > 1 ? result.f1Score : result.f1Score * 100).toFixed(2) + '%'
+                    : 'N/A'}
+                </div>
               </div>
 
               {/* Severity */}
@@ -172,8 +180,12 @@ const DiagnosticResults = ({ result }) => {
                 <h4>Quality Metrics</h4>
                 <ul className="metrics-list">
                   <li>✓ Model Accuracy: {result.accuracy?.toFixed(2)}%</li>
-                  <li>✓ Precision Score: {(result.precision * 100).toFixed(2)}%</li>
-                  <li>✓ F1 Score: {(result.f1Score * 100).toFixed(2)}%</li>
+                  <li>✓ Precision Score: {result.precision !== null && result.precision !== undefined 
+                    ? (result.precision > 1 ? result.precision : result.precision * 100).toFixed(2) + '%'
+                    : 'N/A'}</li>
+                  <li>✓ F1 Score: {result.f1Score !== null && result.f1Score !== undefined
+                    ? (result.f1Score > 1 ? result.f1Score : result.f1Score * 100).toFixed(2) + '%'
+                    : 'N/A'}</li>
                   <li>✓ Confidence Level: {result.confidence?.toFixed(2)}%</li>
                 </ul>
               </div>

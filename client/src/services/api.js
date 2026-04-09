@@ -5,7 +5,7 @@ const API_BASE_URL = 'http://localhost:5000/api';
 // Create axios instance with timeout
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000,
+  timeout: 120000,  // Increased to 2 minutes for other requests (was 30s)
   headers: {
     'Content-Type': 'application/json'
   }
@@ -37,7 +37,7 @@ export const uploadImage = async (formData) => {
       headers: {
         'Content-Type': 'multipart/form-data'
       },
-      timeout: 30000
+      timeout: 300000  // Increased to 5 minutes to account for ML processing time (was 30s)
     });
     return response.data;
   } catch (error) {

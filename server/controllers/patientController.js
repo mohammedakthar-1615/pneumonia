@@ -50,7 +50,7 @@ exports.uploadImage = async (req, res) => {
         headers: {
           'Content-Type': 'application/json'
         },
-        timeout: 120000  // Increased timeout to 2 minutes for large images
+        timeout: 300000  // Increased timeout to 5 minutes (was 120s)
       });
 
       const mlElapsed = Date.now() - mlStartTime;

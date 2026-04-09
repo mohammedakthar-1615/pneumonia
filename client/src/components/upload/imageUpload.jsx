@@ -82,7 +82,7 @@ const ImageUpload = ({ formData, setResult, onValidation, onUploadStart }) => {
     payload.append('details', formData.details);
 
     try {
-      // Simulate processing stages with timing
+      // Simulate processing stages - longer intervals for extended processing
       const stageInterval = setInterval(() => {
         setProcessingStage(prev => {
           if (prev >= 4) {
@@ -91,7 +91,7 @@ const ImageUpload = ({ formData, setResult, onValidation, onUploadStart }) => {
           }
           return prev + 1;
         });
-      }, 15000); // Change stage every 15 seconds
+      }, 35000); // 35 seconds per stage (4 stages = ~140 seconds = 2.3 minutes displayed) 
 
       const response = await uploadImage(payload);
       clearInterval(stageInterval);
@@ -112,9 +112,9 @@ const ImageUpload = ({ formData, setResult, onValidation, onUploadStart }) => {
       let errorMessage = 'Upload failed. Please try again.';
       
       if (err.isNetworkError) {
-        errorMessage = 'Network error - ensure backend server is running on port 5000';
+        errorMessage = 'Network error - ensure backend server (port 5000) and ML service (port 5001) are running';
       } else if (err.isTimeout) {
-        errorMessage = 'Request timeout - server took too long to respond';
+        errorMessage = 'Request timeout - processing took longer than expected. Please try again or contact support if the issue persists.';
       } else if (err.message) {
         errorMessage = err.message;
       } else if (typeof err === 'string') {
@@ -177,7 +177,7 @@ const ImageUpload = ({ formData, setResult, onValidation, onUploadStart }) => {
               </p>
             </div>
 
-            <p className="processing-estimate">⏱️ Estimated time: 1-2 minutes</p>
+            <p className="processing-estimate">⏱️ Estimated time: 3-6 minutes (due to comprehensive AI processing)</p>
           </div>
         </div>
       )}
