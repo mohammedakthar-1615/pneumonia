@@ -1,47 +1,57 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import './styles/Navbar.css';
 
 const Navbar = () => {
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="top-nav">
-      <div className="brand-shell">
-        <div className="brand-chip">🏥</div>
-        <div className="brand-text">Pneumonia AI Detector</div>
-      </div>
+    <nav className="navbar">
+      <div className="navbar-container">
+        <Link to="/" className="brand">
+          <div className="brand-chip">💊</div>
+          <span className="brand-text">PneumoAI</span>
+        </Link>
 
-      <div className="nav-links">
-        <Link 
-          to="/" 
-          className={`nav-link ${isActive('/') ? 'active' : ''}`}
-          title="Home - Welcome and overview"
+        <button 
+          className="mobile-menu-btn"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
-          🏠 Home
-        </Link>
-        <Link 
-          to="/predict" 
-          className={`nav-link ${isActive('/predict') ? 'active' : ''}`}
-          title="Analyze - Upload and predict X-rays"
-        >
-          🔬 Analyze
-        </Link>
-        <Link 
-          to="/dashboard" 
-          className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}
-          title="Dashboard - View patient history and reports"
-        >
-          📊 Dashboard
-        </Link>
-        <Link 
-          to="/about" 
-          className={`nav-link ${isActive('/about') ? 'active' : ''}`}
-          title="About - Learn how pneumonia works and follow recovery guidance"
-        >
-          🧠 About
-        </Link>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <ul className={`nav-links ${mobileMenuOpen ? 'active' : ''}`}>
+          <li>
+            <Link to="/" className={isActive('/') ? 'active' : ''}>
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link to="/predict" className={isActive('/predict') ? 'active' : ''}>
+              Predict
+            </Link>
+          </li>
+          <li>
+            <Link to="/history" className={isActive('/history') ? 'active' : ''}>
+              History
+            </Link>
+          </li>
+          <li>
+            <Link to="/about" className={isActive('/about') ? 'active' : ''}>
+              About
+            </Link>
+          </li>
+          <li>
+            <Link to="/precautions" className={isActive('/precautions') ? 'active' : ''}>
+              Precautions
+            </Link>
+          </li>
+        </ul>
       </div>
     </nav>
   );

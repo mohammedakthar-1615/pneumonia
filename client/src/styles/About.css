@@ -1,0 +1,477 @@
+.about-page {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 80px;
+}
+
+.about-hero {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(6, 182, 212, 0.15) 100%);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+  padding: 60px 24px;
+  margin-bottom: 60px;
+}
+
+.hero-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.about-hero h1 {
+  margin: 0 0 16px 0;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  background: linear-gradient(135deg, #7c3aed, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.about-hero p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.about-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+/* Section Styling */
+.about-section {
+  margin-bottom: 80px;
+}
+
+.section-header {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.section-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 2rem;
+  color: #f1f5f9;
+  font-weight: 800;
+}
+
+.section-header p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 1.05rem;
+}
+
+/* Grid Layouts */
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.about-card {
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  border-radius: 16px;
+  padding: 28px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.about-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #7c3aed, #06b6d4);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.about-card:hover::before {
+  transform: scaleX(1);
+}
+
+.about-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(124, 58, 237, 0.25);
+  box-shadow: 0 24px 60px rgba(124, 58, 237, 0.15);
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+  display: inline-block;
+}
+
+.about-card h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.3rem;
+  color: #f1f5f9;
+  font-weight: 700;
+}
+
+.about-card p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* Symptoms Grid */
+.symptoms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.symptom-card {
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.symptom-card:hover {
+  border-color: rgba(124, 58, 237, 0.25);
+  box-shadow: 0 16px 40px rgba(124, 58, 237, 0.1);
+  transform: translateY(-4px);
+}
+
+.symptom-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  display: inline-block;
+}
+
+.symptom-card h4 {
+  margin: 0 0 8px 0;
+  color: #f1f5f9;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.symptom-card p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+/* Risk Factors Grid */
+.risk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.risk-card {
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s ease;
+}
+
+.risk-card:hover {
+  border-color: rgba(20, 184, 166, 0.25);
+  box-shadow: 0 16px 40px rgba(20, 184, 166, 0.1);
+  transform: translateY(-4px);
+}
+
+.risk-card h4 {
+  margin: 0 0 16px 0;
+  color: #f1f5f9;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.risk-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.risk-card ul li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.risk-card ul li::before {
+  content: '▸';
+  flex-shrink: 0;
+  color: #f59e0b;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Recovery Grid */
+.recovery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.recovery-item {
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.recovery-item:hover {
+  border-color: rgba(20, 184, 166, 0.25);
+  box-shadow: 0 16px 40px rgba(20, 184, 166, 0.1);
+  transform: translateY(-4px);
+}
+
+.item-icon {
+  font-size: 2.8rem;
+  margin-bottom: 12px;
+  display: inline-block;
+}
+
+.recovery-item h4 {
+  margin: 0 0 12px 0;
+  color: #f1f5f9;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.recovery-item p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Important Information */
+.important-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 60px;
+}
+
+.info-card {
+  border-radius: 16px;
+  padding: 32px;
+  border-left: 4px solid;
+  transition: all 0.3s ease;
+}
+
+.info-primary {
+  background: rgba(6, 182, 212, 0.05);
+  border-color: #06b6d4;
+}
+
+.info-primary:hover {
+  box-shadow: 0 16px 40px rgba(6, 182, 212, 0.1);
+}
+
+.info-warning {
+  background: rgba(251, 113, 133, 0.05);
+  border-color: #fb7185;
+}
+
+.info-warning:hover {
+  box-shadow: 0 16px 40px rgba(251, 113, 133, 0.1);
+}
+
+.info-card h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.2rem;
+  color: #f1f5f9;
+  font-weight: 700;
+}
+
+.info-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-card ul li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.info-primary ul li::before {
+  content: '✓';
+  flex-shrink: 0;
+  color: #06b6d4;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.info-warning ul li::before {
+  content: '•';
+  flex-shrink: 0;
+  color: #fb7185;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+
+/* CTA Section */
+.about-cta {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.cta-box {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.15));
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  border-radius: 20px;
+  padding: 48px 40px;
+  text-align: center;
+  max-width: 600px;
+  box-shadow: 0 24px 60px rgba(124, 58, 237, 0.15);
+}
+
+.cta-box h2 {
+  margin: 0 0 12px 0;
+  font-size: 2rem;
+  background: linear-gradient(135deg, #7c3aed, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+}
+
+.cta-box p {
+  margin: 0 0 24px 0;
+  color: #94a3b8;
+  font-size: 1.05rem;
+}
+
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #7c3aed, #06b6d4);
+  color: white;
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-shadow: 0 12px 32px rgba(124, 58, 237, 0.3);
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px rgba(124, 58, 237, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .about-page {
+    padding-top: 70px;
+  }
+
+  .about-hero {
+    padding: 40px 16px;
+    margin-bottom: 40px;
+  }
+
+  .about-hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .about-hero p {
+    font-size: 1rem;
+  }
+
+  .about-container {
+    padding: 0 16px 40px;
+  }
+
+  .about-section {
+    margin-bottom: 60px;
+  }
+
+  .section-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .about-grid,
+  .symptoms-grid,
+  .risk-grid,
+  .recovery-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .about-card,
+  .risk-card,
+  .recovery-item {
+    padding: 20px;
+  }
+
+  .cta-box {
+    padding: 32px 24px;
+  }
+
+  .cta-box h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-hero {
+    padding: 32px 12px;
+  }
+
+  .about-hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .section-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .section-header p {
+    font-size: 0.95rem;
+  }
+
+  .about-card,
+  .risk-card,
+  .recovery-item,
+  .symptom-card {
+    padding: 16px;
+  }
+
+  .card-icon,
+  .symptom-icon {
+    font-size: 2rem;
+  }
+
+  .item-icon {
+    font-size: 2.2rem;
+  }
+}

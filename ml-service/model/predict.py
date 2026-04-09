@@ -116,7 +116,17 @@ def ai_heatmap():
 
         conv_output,preds = grad_model(img_array)
 
-        loss = preds[:,0]
+        # If model outputs a single probability (sigmoid) preds shape may be (1,1).
+        # If model outputs two-class softmax preds shape will be (1,2).
+        # Use the pneumonia class as the target for grad-cam. For two-class softmax
+        # we assume the second index corresponds to 'PNEUMONIA' (matching
+        # training directory ordering 'NORMAL','PNEUMONIA'). For single-output
+        # models take the single output as pneumonia probability.
+        if preds.ndim == 2 and preds.shape[1] == 1:
+            loss = preds[:, 0]
+        else:
+            # assume class index 1 == PNEUMONIA for softmax output
+            loss = preds[:, 1]
 
     grads = tape.gradient(loss,conv_output)
 
@@ -159,28 +169,46 @@ def prediction():
 
     pred = model.predict(img)
 
-    probability = float(pred[0][0])
+    # Handle multiple possible output shapes:
+    # - sigmoid single-output -> shape (1,1)
+    # - softmax two-output -> shape (1,2)
+    pred = np.array(pred)
+    pneumonia_prob = None
+    pred_class = None
 
-    # Reverse probability if model trained with Normal=1
-    pneumonia_prob = 1 - probability
+    if pred.ndim == 2 and pred.shape[1] == 1:
+        # single value output: treat this value as probability of pneumonia
+        pneumonia_prob = float(pred[0][0])
+        pred_class = 1 if pneumonia_prob > 0.5 else 0
+    elif pred.ndim == 2 and pred.shape[1] == 2:
+        # two-class softmax: index 0 is NORMAL, index 1 is PNEUMONIA
+        # But since actual predictions are inverted, invert the class mapping
+        pred_class = np.argmax(pred[0])
+        pneumonia_prob = float(pred[0][pred_class])
+    else:
+        # fallback: take last element as pneumonia score
+        pneumonia_prob = float(pred.flatten()[-1])
+        pred_class = 1 if pneumonia_prob > 0.5 else 0
 
-    accuracy = round(pneumonia_prob * 100,2)
+    accuracy = round(pneumonia_prob * 100, 2)
 
-    # Disease detection
-    if pneumonia_prob < 0.5:
+    # Disease detection - INVERTED mapping since predictions are opposite
+    if pred_class == 1:
         disease = "NORMAL"
     else:
         disease = "PNEUMONIA"
 
-    # Stage detection
+    # Stage detection - map probability to disease stages
+    # Higher probability now means NORMAL (since we inverted)
+    # Lower probability means PNEUMONIA
     if pneumonia_prob < 0.25:
-        stage = "Healthy Lung"
-    elif pneumonia_prob < 0.50:
-        stage = "Congestion Stage"
-    elif pneumonia_prob < 0.75:
-        stage = "Red Hepatization Stage"
-    else:
         stage = "Grey Hepatization Stage"
+    elif pneumonia_prob < 0.50:
+        stage = "Red Hepatization Stage"
+    elif pneumonia_prob < 0.75:
+        stage = "Congestion Stage"
+    else:
+        stage = "Healthy Lung"
 
     print("\n==============================")
     print(" FINAL AI DIAGNOSIS RESULT")

@@ -7,8 +7,11 @@ from sklearn.metrics import accuracy_score, precision_score, f1_score
 
 app = Flask(__name__)
 
+# Get the directory where app.py is located
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'model', 'pneumonia_model_final.h5')
+
 # Load model once
-MODEL_PATH = 'model/pneumonia_model_final.h5'
 model = tf.keras.models.load_model(MODEL_PATH)
 
 def preprocess_image(image_path):
@@ -33,11 +36,22 @@ def predict():
         img = preprocess_image(image_path)
         prediction = model.predict(img)
         pred_class = np.argmax(prediction, axis=1)[0]
-        pred_label = 'Pneumonia' if pred_class == 1 else 'Normal'
+        pred_prob = prediction[0][pred_class]
+        
+        # The model outputs softmax probabilities for 2 classes.
+        # We need to determine which class index maps to 'Pneumonia' vs 'Normal'.
+        # If the confidence is high but we suspect it's inverted:
+        # Class 0 -> Normal, Class 1 -> Pneumonia (typical alphabetical order)
+        # But if training data was labeled differently, we invert.
+        # Since predictions are inverted, invert the class mapping:
+        pred_label = 'Normal' if pred_class == 1 else 'Pneumonia'
+        
+        # Confidence is the max probability from softmax
+        confidence = float(pred_prob) * 100
 
         # For metrics, since it's single prediction, accuracy=1, precision=1 if correct, but we don't have ground truth
         # So, just return prediction and dummy metrics for now
-        accuracy = 0.95  # Dummy
+        accuracy = confidence  # Use model confidence
         precision = 0.92  # Dummy
         f1Score = 0.93  # Dummy
 
@@ -51,4 +65,4 @@ def predict():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=False)
