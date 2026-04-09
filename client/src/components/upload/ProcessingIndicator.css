@@ -1,0 +1,280 @@
+/* Processing Indicator Styles */
+
+.processing-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.processing-container {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 20px;
+  padding: 60px 80px;
+  max-width: 900px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 150, 255, 0.3);
+  border: 2px solid rgba(0, 150, 255, 0.2);
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.processing-container h3 {
+  color: #00d4ff;
+  font-size: 28px;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+}
+
+.processing-text {
+  color: #b0b0b0;
+  font-size: 14px;
+  margin: 0 0 40px 0;
+  letter-spacing: 1px;
+}
+
+/* 4-Stage Processing Stages */
+.processing-stages {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 50px 0;
+}
+
+.stage {
+  flex: 1;
+  padding: 30px;
+  background: rgba(0, 30, 60, 0.6);
+  border-radius: 15px;
+  border: 2px solid rgba(100, 150, 200, 0.3);
+  transition: all 0.5s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stage::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.stage.active {
+  background: rgba(0, 150, 255, 0.15);
+  border-color: #00d4ff;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.4), inset 0 0 20px rgba(0, 212, 255, 0.1);
+  transform: translateY(-8px);
+}
+
+.stage.active::before {
+  opacity: 1;
+  animation: shimmer 1.5s infinite;
+}
+
+.stage.completed {
+  background: rgba(0, 200, 100, 0.1);
+  border-color: #00c864;
+  box-shadow: 0 0 15px rgba(0, 200, 100, 0.3);
+}
+
+.stage.completed .stage-number::after {
+  content: '✓';
+  position: absolute;
+  font-size: 18px;
+  color: #00c864;
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+}
+
+.stage-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: #00d4ff;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.stage.completed .stage-number {
+  color: #00c864;
+}
+
+.stage-label {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.stage-sub {
+  color: #a0a0a0;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+/* Progress Bar */
+.processing-progress {
+  margin: 50px 0;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(100, 150, 200, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 150, 255, 0.3);
+  margin-bottom: 20px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0096ff, #00d4ff, #0096ff);
+  border-radius: 10px;
+  transition: width 3s ease-out;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.8);
+}
+
+.progress-text {
+  color: #00d4ff;
+  font-size: 13px;
+  margin: 0;
+  font-weight: 500;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.processing-estimate {
+  color: #a0a0a0;
+  font-size: 12px;
+  margin: 20px 0 0 0;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .processing-container {
+    padding: 40px 30px;
+    margin: 20px;
+  }
+
+  .processing-container h3 {
+    font-size: 22px;
+  }
+
+  .processing-stages {
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .stage {
+    padding: 20px;
+    flex: 1 1 calc(50% - 8px);
+  }
+
+  .stage-number {
+    font-size: 24px;
+  }
+
+  .stage-label {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .processing-container {
+    padding: 30px 20px;
+  }
+
+  .processing-stages {
+    flex-direction: column;
+  }
+
+  .stage {
+    flex: 1 1 100%;
+  }
+
+  .processing-estimate {
+    font-size: 11px;
+  }
+}
+
+/* Loading Spinner Animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Stage Active Animation */
+@keyframes stageGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.4), inset 0 0 20px rgba(0, 212, 255, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.6), inset 0 0 30px rgba(0, 212, 255, 0.2);
+  }
+}
+
+.stage.active {
+  animation: stageGlow 2s ease-in-out infinite;
+}

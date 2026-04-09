@@ -39,21 +39,36 @@ exports.uploadImage = async (req, res) => {
 
     // Call ML service with retry/fallback logic
     let mlResponse;
+    const mlStartTime = Date.now();
     try {
+      console.log(`[ML Service] Calling /predict with imagePath: ${imagePath}`);
+      console.log(`[ML Service] Request timeout: 120000ms (2 minutes)`);
+      
       mlResponse = await axios.post('http://localhost:5001/predict', {
         imagePath: imagePath
       }, {
         headers: {
           'Content-Type': 'application/json'
         },
-        timeout: 30000
+        timeout: 120000  // Increased timeout to 2 minutes for large images
       });
 
+      const mlElapsed = Date.now() - mlStartTime;
+      console.log(`[ML Service] ✓ Response received in ${mlElapsed}ms`);
+      
       if (!mlResponse?.data) {
-        throw new Error('ML service returned invalid response');
+        throw new Error('ML service returned invalid response structure');
       }
+      
+      console.log(`[ML Service] ✓ Got response from /predict: prediction=${mlResponse.data.prediction}, confidence=${mlResponse.data.confidence}`);
+      
     } catch (mlError) {
-      console.error('ML Service error:', mlError.message, mlError.response?.data || 'No response body');
+      const mlElapsed = Date.now() - mlStartTime;
+      console.error(`❌ [ML Service] Error after ${mlElapsed}ms: ${mlError.message}`);
+      console.error(`❌ [ML Service] Error code: ${mlError.code}`);
+      console.error(`❌ [ML Service] Response status: ${mlError.response?.status}`);
+      console.error(`❌ [ML Service] Response data:`, mlError.response?.data);
+      console.error(`❌ [ML Service] Timeout? ${mlError.code === 'ECONNABORTED'}`);
 
       const fallbackMessage = mlError.response?.data?.error ||
         mlError.message ||
@@ -65,27 +80,72 @@ exports.uploadImage = async (req, res) => {
           accuracy: 0,
           precision: 0,
           f1Score: 0,
-          status: fallbackMessage
+          confidence: 0,
+          severity: 'N/A',
+          pneumoniaStage: 'Unknown',
+          status: fallbackMessage,
+          errorDetails: {
+            mlServiceError: mlError.message,
+            elapsedTime: mlElapsed,
+            responseStatus: mlError.response?.status
+          }
         }
       };
     }
 
-    const { prediction, accuracy, precision, f1Score, status } = mlResponse.data;
+    const { 
+      prediction, 
+      accuracy, 
+      precision, 
+      f1Score,
+      confidence,
+      pneumoniaStage,
+      severity,
+      diagnosticImages 
+    } = mlResponse.data;
 
-    // Save to DB
+    console.log(`[Patient Save] Preparing to save:`, {
+      prediction,
+      confidence,
+      pneumoniaStage,
+      severity,
+      hasImages: !!diagnosticImages,
+      numImages: diagnosticImages ? Object.keys(diagnosticImages).length : 0
+    });
+
+    // Save to DB with all diagnostic data
     const patient = new Patient({
       patientName: patientName.trim(),
       age: parseInt(age),
       details: details || '',
       imagePath,
       prediction: prediction || 'PENDING',
+      confidence: confidence || accuracy || 0,
       accuracy: accuracy || 0,
       precision: precision || 0,
       f1Score: f1Score || 0,
-      status: status || null
+      pneumoniaStage: pneumoniaStage || 'Healthy Lung',
+      severity: severity || 'Healthy',
+      diagnosticImages: diagnosticImages || {
+        preprocessing: null,
+        segmentation: null,
+        edgeDetection: null,
+        gradcam: null
+      }
     });
 
-    const savedPatient = await patient.save();
+    console.log(`[Patient Save] Patient object created, saving to DB...`);
+    let savedPatient;
+    try {
+      savedPatient = await patient.save();
+      console.log(`[Patient Save] ✓ Patient saved with ID: ${savedPatient._id}`);
+      console.log(`[Patient Save] Document in DB with fields:`, Object.keys(savedPatient.toObject()));
+    } catch (saveError) {
+      console.error(`[Patient Save] ✗ Save failed:`, saveError.message);
+      console.error(`[Patient Save] Error details:`, saveError);
+      throw saveError;
+    }
+    console.log(`[Patient Save] Final - returning saved patient:`, savedPatient._id);
 
     res.status(201).json({
       message: 'Upload successful and sent to analysis',
