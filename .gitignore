@@ -1,211 +1,53 @@
-# ========================================
-# DEPENDENCIES - DO NOT COMMIT
-# ========================================
-node_modules/
-.venv/
-venv/
-env/
-ENV/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.egg-info/
-dist/
-build/
-*.egg
+### System
+.DS_Store
+Thumbs.db
 
-# ========================================
-# ENVIRONMENT & CONFIGURATION
-# ========================================
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.*.local
+### Node / JavaScript
+# Ignore node_modules inside each package
+/client/node_modules/
+/server/node_modules/
 
-# ========================================
-# BUILD OUTPUTS
-# ========================================
-client/dist/
-client/build/
-client/.next/
-server/build/
-ml-service/build/
-*.log
+# Build / dist
+/client/dist/
+/client/build/
+/server/dist/
+/server/build/
+
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-# ========================================
-# IDE & EDITOR FILES
-# ========================================
-.vscode/
-.vscode-insiders/
-.idea/
-.idea_modules/
-*.sublime-project
-*.sublime-workspace
-*.swp
-*.swo
-*~
-.DS_Store
-.AppleDouble
-.LSOverride
-.hidden
-Thumbs.db
-ehthumbs.db
+### Python
+# Virtualenv
+/ml-service/.venv/
+venv/
+ENV/
 
-# ========================================
-# TESTING & COVERAGE
-# ========================================
-coverage/
-.nyc_output/
-.pytest_cache/
-.coverage
-.coverage.*
-.cache
-.junit.xml
-htmlcov/
-
-# ========================================
-# PYTHON SPECIFIC
-# ========================================
-ml-service/.venv/
-ml-service/venv/
-ml-service/__pycache__/
-ml-service/*.pyc
-ml-service/model/__pycache__/
-ml-service/model/*.pyc
-site-packages/
-.Python
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
-.hypothesis/
+# Byte-compiled / cache
+__pycache__/
 *.py[cod]
 *$py.class
 
-# ========================================
-# ML MODEL FILES (Large, rebuild from training)
-# ========================================
-*.h5
-*.pkl
-*.pth
-*.pt
-*.onnx
-*.pb
-ml-service/model/__pycache__/
-ml-service/results/
+# Python env files
+*.env
 
-# ========================================
-# DATABASE & UPLOADS
-# ========================================
-*.db
-*.sqlite
-*.sqlite3
-mongo.log
-server/uploads/
-client/public/uploads/
-uploads/
+### Uploads and generated results
+/server/uploads/
+/ml-service/results/
 
-# ========================================
-# MEDIA FILES (Large, not needed in repo)
-# ========================================
-*.jpg
-*.jpeg
-*.png
-*.gif
-*.bmp
-*.svg
-*.webp
-*.mp4
-*.avi
-*.mov
-*.mkv
-*.zip
-*.tar
-*.tar.gz
-*.rar
+### IDEs
+.vscode/
+.idea/
+.pytest_cache/
 
-# ========================================
-# TEMPORARY FILES
-# ========================================
-*.tmp
-*.temp
-.cache/
-temp/
-tmp/
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# ========================================
-# NODE/NPM SPECIFIC
-# ========================================
-npm-debug.log
-.npm/
-.eslintcache
-.node_repl_history
-*.tgz
-.yarn-integrity
-.pnp
-.pnp.js
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
-.pnpm-store/
-
-# ========================================
-# LOCK FILES (Optional - comment out to commit)
-# ========================================
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
-
-# ========================================
-# JUPYTER NOTEBOOKS
-# ========================================
-.ipynb_checkpoints/
-*.ipynb
-notebooks/.ipynb_checkpoints/
-
-# ========================================
-# MISC
-# ========================================
-.env.test
-debug.log
-.babelrc.js
-.prettierrc.js
-config/local.js
-secrets/
-private/
-.git/
-.gitkeep
-
-# ========================================
-# OS SPECIFIC
-# ========================================
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-._*
-.Spotlight-V100
-.Trashes
-
-# Windows
-Thumbs.db
+### OS
 ehthumbs.db
-desktop.ini
-$RECYCLE.BIN/
-*.lnk
+Icon?
 
-# Linux
-.directory
-*~
+### Misc
+coverage/
+*.sqlite3
 
+# Keep models tracked by default; if you want to ignore local large models, add lines below
+# ml-service/model/*.h5
